@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
+	"net/http"
 )
 
 /*
@@ -29,6 +29,11 @@ type Article struct {
 }
 
 func main() {
+	
+	keyWords := []string{"bitcoin", "coronavirus", "ukraine"}
+	for i := 0; i < len(keyWords); i++ {
+		fmt.Println("My jkeyword: ", keyWords[i])
+	}
 
 	var responseObject Response
 
