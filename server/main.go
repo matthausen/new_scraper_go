@@ -7,17 +7,19 @@ import (
 	"log"
 	"os"
 	"net/http"
+	"github.com/joho/godotenv"
 )
 
-/*
-* The news aggregator needs to scrape information for the following entity types
-MEDICAL
-BIOLOGICAL
-WEAPONS
-TECHNOLOGY
-*/
+func goDotEnvVariable(key string) string {
 
-var API_KEY = "91d30a50507549e8a1134c0642992de4"
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
+}
 
 type Response struct {
 	Article []Article `json:"articles"`
@@ -29,12 +31,7 @@ type Article struct {
 }
 
 func main() {
-	
-	keyWords := []string{"bitcoin", "coronavirus", "ukraine"}
-	for i := 0; i < len(keyWords); i++ {
-		fmt.Println("My jkeyword: ", keyWords[i])
-	}
-
+	apiKey := goDotEnvVariable("API_KEY")
 	var responseObject Response
 
 	topics := []string{"china", "iraq", "bitcoin", "coronavirus", "ukraine", "iphone", "google", "syria", "virus", "global warming", "environment"}
@@ -46,7 +43,7 @@ func main() {
 	}
 
 	for i := 0; i < len(topics); i++ {
-		resp, err := http.Get("https://newsapi.org/v2/everything?q=" + topics[i] + "&apiKey=" + API_KEY)
+		resp, err := http.Get("https://newsapi.org/v2/everything?q=" + topics[i] + "&apiKey=" + apiKey)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -70,6 +67,8 @@ func main() {
 			fmt.Println(l, "bytes written successfully")
 		}
 	}
-	/* http.Handle("/", http.FileServer(http.Dir("./static")))
-	http.ListenAndServe(":8080", nil) */
+	r := router.Router()
+	fmt.Println("Starting server on the 8080...")
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
