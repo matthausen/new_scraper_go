@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import API_ENDPOINTS from '../api';
+import API_ENDPOINTS from '../../api';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Coin() {
+export default function Topic() {
   const classes = useStyles();
   const [topic, setTopic] = useState('');
 

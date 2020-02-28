@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"net/http"
+	"os"
+
+	"./router"
 	"github.com/joho/godotenv"
 )
 

@@ -28,7 +28,7 @@ func GetTopic(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Fprintf(w, "Post from website! r.PostForm = %v\n", r.PostForm)
-		coin := r.FormValue("topic")
+		topic := r.FormValue("topic")
 		fmt.Fprintf(w, "Topic = %s\n", topic)
 
 	default:

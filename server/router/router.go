@@ -9,6 +9,6 @@ func Router() *mux.Router {
 
 	router := mux.NewRouter()
 
-	// router.HandleFunc("/api/topic", handlers.GetTopic).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/topic", handlers.GetTopic).Methods("POST", "OPTIONS")
 	return router
 }
