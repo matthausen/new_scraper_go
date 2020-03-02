@@ -36,8 +36,15 @@ export default function Topic() {
   }
 
   return (
-    <form className={classes.root} method="POST" action="/" noValidate autoComplete=" off">
-      <TextField id="topic" name="topic" type="text" label="Topic" onChange={handleChange} />
+    <form className={classes.root} method="POST" action="/" noValidate autoComplete="off">
+      <TextField
+        id="topic"
+        name="topic"
+        value={topic}
+        type="text"
+        label="Topic"
+        onChange={handleChange}
+      />
       <Button type="submit" onClick={handleSubmit}>Submit</Button>
     </form >
   );

@@ -12,6 +12,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var apiKey = goDotEnvVariable("API_KEY")
+var topics = []string{"china", "iraq", "bitcoin", "coronavirus", "ukraine", "iphone", "google", "syria", "virus", "global warming", "environment"}
+
 func goDotEnvVariable(key string) string {
 
 	err := godotenv.Load(".env")
@@ -32,12 +35,9 @@ type Article struct {
 	Content string `json:"content"`
 }
 
-func main() {
-	apiKey := goDotEnvVariable("API_KEY")
+func generateText() {
 	var responseObject Response
-
-	topics := []string{"china", "iraq", "bitcoin", "coronavirus", "ukraine", "iphone", "google", "syria", "virus", "global warming", "environment"}
-
+	
 	f, err := os.Create("train.txt")
 	if err != nil {
 		fmt.Println(err)
@@ -69,6 +69,12 @@ func main() {
 			fmt.Println(l, "bytes written successfully")
 		}
 	}
+}
+
+func main() {
+
+	// generateText()
+	
 	r := router.Router()
 	fmt.Println("Starting server on the 8080...")
 

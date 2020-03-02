@@ -12,6 +12,7 @@ func handleCors(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Content-Type", "*")
 }
 
+// GetTopic : get the user input on news topic
 func GetTopic(w http.ResponseWriter, r *http.Request) {
 	handleCors(&w, r)
 
@@ -20,18 +21,18 @@ func GetTopic(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case "GET":
-		http.ServeFile(w, r, "form.html")
+		fmt.Fprintf(w, "Request method not supported.")
 	case "POST":
 		if err := r.ParseForm(); err != nil {
 			fmt.Fprintf(w, "ParseForm() err: %v", err)
 			return
 		}
 
-		fmt.Fprintf(w, "Post from website! r.PostForm = %v\n", r.PostForm)
+		fmt.Fprintf(w, "r.PostForm = %v\n", r.PostForm)
 		topic := r.FormValue("topic")
 		fmt.Fprintf(w, "Topic = %s\n", topic)
 
 	default:
-		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
+		fmt.Fprintf(w, "Request method not supported.")
 	}
 }
