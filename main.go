@@ -8,13 +8,21 @@ import (
 	"net/http"
 	"os"
 
-	"./router"
-
+	"./service"
 	"github.com/joho/godotenv"
 )
 
 var apiKey = goDotEnvVariable("API_KEY")
 var topics = []string{"china", "iraq", "bitcoin", "coronavirus", "ukraine", "iphone", "google", "syria", "virus", "global warming", "environment"}
+
+type Response struct {
+	Article []Article `json:"articles"`
+}
+
+type Article struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
 
 func goDotEnvVariable(key string) string {
 
@@ -25,15 +33,6 @@ func goDotEnvVariable(key string) string {
 	}
 
 	return os.Getenv(key)
-}
-
-type Response struct {
-	Article []Article `json:"articles"`
-}
-
-type Article struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
 }
 
 func generateText() {
@@ -76,9 +75,9 @@ func main() {
 
 	// generateText()
 
-	r := router.Router()
-
 	http.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(http.Dir("assets"))))
+	r := service.Router()
+
 	fmt.Println("Starting server on the 8080...")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
