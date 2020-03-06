@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/matthausen/news_aggregator"
 	"log"
 	"net/http"
 	"text/template"

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"handlers"
 	"github.com/gorilla/mux"
+	"../handlers"
 )
 
 func Router() *mux.Router {

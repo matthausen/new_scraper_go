@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"os"
 
+	"./router"
+
 	"github.com/joho/godotenv"
-	"router"
 )
 
 var apiKey = goDotEnvVariable("API_KEY")
