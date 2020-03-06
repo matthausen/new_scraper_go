@@ -22,6 +22,11 @@ type Article struct {
 	Content string `json:"content"`
 }
 
+type New struct {
+	Title string
+	Text  string
+}
+
 func Router() *mux.Router {
 
 	router := mux.NewRouter()
@@ -56,7 +61,7 @@ func goDotEnvVariable(key string) string {
 	return os.Getenv(key)
 }
 
-func fetchNews() {
+func fetchNews() []New {
 	var responseObject Response
 
 	resp, err := http.Get("http://newsapi.org/v2/top-headlines?sources=google-news&apiKey=" + apiKey)
@@ -72,11 +77,24 @@ func fetchNews() {
 		log.Fatalln(err)
 	}
 	json.Unmarshal(responseData, &responseObject)
+
+	news := make([]New, 0)
+
+	for i := 0; i < len(responseObject.Article); i++ {
+		new := New{responseObject.Article[i].Title, responseObject.Article[i].Content}
+		news = append(news, new)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	return news
 }
 
 func index(res http.ResponseWriter, req *http.Request) {
-	// fetchNews()
-	err := tpl.ExecuteTemplate(res, "index.gohtml", nil)
+
+	news := fetchNews()
+
+	err := tpl.ExecuteTemplate(res, "index.gohtml", news)
 	if err != nil {
 		log.Fatalln("template didn't execute: ", err)
 	}
