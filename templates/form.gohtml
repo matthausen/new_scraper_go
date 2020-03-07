@@ -1,7 +1,9 @@
 {{define "searchForm"}}
 <div class="container">
   <div class="input-group mt-5 mb-5 md-form form-sm form-2 pl-0">
-    <input class="form-control my-0 py-1 cyan-border" type="text" placeholder="Search" aria-label="Search by topic">
+    <form method="POST" action="/">
+      <input class="form-control my-0 py-1 cyan-border" type="text" placeholder="Search" aria-label="Search by topic">
+    </form>
     <div class="input-group-append">
       <span class="input-group-text" id="basic-text1"><i class="fa fa-search text-grey"
           aria-hidden="true"></i></span>
