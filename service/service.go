@@ -20,11 +20,13 @@ type Response struct {
 type Article struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
+	Url     string `json:"url"`
 }
 
 type New struct {
 	Title string
 	Text  string
+	Url   string
 }
 
 func Router() *mux.Router {
@@ -81,7 +83,7 @@ func fetchNews() []New {
 	news := make([]New, 0)
 
 	for i := 0; i < len(responseObject.Article); i++ {
-		new := New{responseObject.Article[i].Title, responseObject.Article[i].Content}
+		new := New{responseObject.Article[i].Title, responseObject.Article[i].Content, responseObject.Article[i].Url}
 		news = append(news, new)
 		if err != nil {
 			fmt.Println(err)
