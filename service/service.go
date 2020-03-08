@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,12 +37,14 @@ type New struct {
 var tpl *template.Template
 var endpoint = "http://newsapi.org/v2/top-headlines?sources=google-news&apiKey=API_KEY"
 var apiKey = goDotEnvVariable("API_KEY")
+var topic string
 
 func Router() *mux.Router {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", index).Methods("GET", "POST", "OPTIONS")
 	router.HandleFunc("/topic", byTopic).Methods("GET", "POST", "OPTIONS")
+	router.HandleFunc("/generateText", generateText).Methods("GET", "POST", "OPTIONS")
 	return router
 }
 
@@ -137,6 +140,99 @@ func fetchByTopic(t string) []New {
 	return news
 }
 
+func generateText(w http.ResponseWriter, r *http.Request) {
+	var responseObject Response
+
+	url := "https://localhost:8080/train.txt"
+	filePath := "train.txt"
+
+	if len(topic) > 0 {
+		f, err := os.Create("train.txt")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		resp, err := http.Get("https://newsapi.org/v2/everything?q=" + topic + "&apiKey=" + apiKey)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		defer resp.Body.Close()
+
+		responseData, err := ioutil.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+		json.Unmarshal(responseData, &responseObject)
+
+		for i := 0; i < len(responseObject.Article); i++ {
+			l, err := f.WriteString(responseObject.Article[i].Title + "\n" + responseObject.Article[i].Content)
+			if err != nil {
+				fmt.Println(err)
+				f.Close()
+				return
+			}
+			fmt.Println(l, "bytes written successfully")
+		}
+		if err := DownloadFile(filePath, url); err != nil {
+			panic(err)
+		}
+	} else {
+		f, err := os.Create("train.txt")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		resp, err := http.Get("http://newsapi.org/v2/top-headlines?sources=google-news&apiKey=" + apiKey)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		defer resp.Body.Close()
+
+		responseData, err := ioutil.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Fatalln(err)
+		}
+		json.Unmarshal(responseData, &responseObject)
+
+		for i := 0; i < len(responseObject.Article); i++ {
+			l, err := f.WriteString(responseObject.Article[i].Title + "\n" + responseObject.Article[i].Content)
+			if err != nil {
+				fmt.Println(err)
+				f.Close()
+				return
+			}
+			fmt.Println(l, "bytes written successfully")
+		}
+		if err := DownloadFile(filePath, url); err != nil {
+			panic(err)
+		}
+	}
+}
+
+// DownloadFile :  generate text file
+func DownloadFile(url string, filePath string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	out, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
 func byTopic(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
@@ -145,7 +241,7 @@ func byTopic(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			r.ParseForm()
 		}
-		topic := r.FormValue("topic")
+		topic = r.FormValue("topic")
 		news := fetchByTopic(topic)
 		err := tpl.ExecuteTemplate(w, "bytopic.gohtml", news)
 		if err != nil {
